@@ -1,0 +1,204 @@
+import java.io.*;
+import java.util.*;
+
+public class rro {
+
+public static void main(String[] args)
+{
+
+Scanner sc=new Scanner(System.in);
+
+int at[],bt[],p[],bt1[],ct[],tat[],wt[];
+at=new int[10];
+bt=new int[10];
+p=new int[10];
+bt1 =new int[10];
+ct=new int[10];
+tat=new int[10];
+wt=new int[10];
+
+int n=0;
+int t_q=0;
+int tot_bt=0;
+ArrayList<Integer> stack=new ArrayList<Integer>();
+
+System.out.println("Enter the number of processes:\n");
+n=sc.nextInt();
+
+System.out.println("\tEnter the arrival time::Burst time of the processes\n");
+for(int i=0;i<n;i++)
+{
+
+at[i]=sc.nextInt();
+bt[i]=sc.nextInt();
+bt1[i]=bt[i];
+p[i]=i;
+}
+for(int i=0;i<n;i++)
+{
+tot_bt+=bt[i];
+}
+
+System.out.println("\nEnter the time quantum:\t");
+t_q=sc.nextInt();
+
+
+
+System.out.println("at\t bt\t bt1");
+for(int i=0;i<n;i++)
+{
+
+System.out.println("\t"+at[i] + "\t"+bt[i] + "\t"+bt1[i] +"\t");
+}
+
+
+
+
+
+
+//******************************************************************************
+int time_const=0;
+
+for(int j=0;j<n;j++)
+{
+
+if(at[j]<=time_const && bt1[j]!=0 && !stack.contains(j))
+{
+
+
+stack.add(j);
+
+
+
+}
+}// closing of for(int j=0;j<n;j++)
+
+
+int i=0;
+for(int m=0;m<=tot_bt;m++)
+{
+
+
+
+
+
+int y=stack.size();
+int sel_proc=0;
+
+
+for(int k=0;k<y;k++)
+{
+
+sel_proc=stack.get(0);
+System.out.println("**\n" +sel_proc+"\n");	
+stack.remove(stack.indexOf(sel_proc));
+
+
+
+        if(bt1[sel_proc]>=t_q)
+ {
+
+	bt1[sel_proc] -=t_q;
+	i=i+t_q;
+	time_const +=t_q;
+
+
+
+
+	if(bt1[sel_proc]==0)
+	{//_________
+
+	ct[sel_proc]=i;
+
+
+	for(int l=0;l<n;l++)
+        {
+	if(at[l]<=time_const && bt1[l]!=0 && !stack.contains(l) && l!= sel_proc)
+
+        {   
+          stack.add(l);  
+        }
+
+        }
+	
+
+
+	}//__________________
+
+	else//if the burst time is not yet 0,put it in the queue.
+	{
+	for(int l=0;l<n;l++)
+        {
+	if(at[l]<=time_const && bt1[l]!=0 && !stack.contains(l) && l!= sel_proc)
+
+        {   
+          stack.add(l);  
+        }
+
+        }
+	stack.add(sel_proc);
+
+	}
+
+ }     //closing of if(bt1[sel_proc]>=t_q)
+
+
+else if(bt1[sel_proc] < t_q )
+{
+
+int z=bt1[sel_proc];
+bt1[sel_proc]=0;
+i+=z;
+ct[sel_proc]=i;
+time_const +=z;
+
+/////just addeddd_____________________
+
+for(int l=0;l<n;l++)
+        {
+	if(at[l]<=time_const && bt1[l]!=0 && !stack.contains(l) && l!= sel_proc)
+
+        {   
+          stack.add(l);  
+        }
+
+        }
+//___________________________________________
+
+}//closing of else if(bt1[sel_proc] < t_q)
+
+
+} //closing of for(int k=0;k<y;k++)
+
+
+}// closing of for(int i=0;i<tot_bt;i++)
+
+
+
+
+
+
+
+System.out.println("The competion time of the processes are:");
+for(int r=0;r<n;r++)
+{
+
+System.out.println("\t"+ct[r]+"\t");
+
+}
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+}

@@ -1,0 +1,150 @@
+import java.io.*;
+import java.util.Scanner;
+public class SRTF {
+
+	public static void main(String[] args) {
+		
+		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		Scanner s = new Scanner(System.in);  
+		int n;
+	      System.out.println("Please enter the number of Processes: ");
+	       n = s.nextInt();
+	       int proc[][] = new int[n + 1][4];//proc[][0] is the AT array,[][1] - BT,[][2] - WT,[][3] - TT
+	       for(int i = 1; i <= n; i++)
+	       {
+	      System.out.println("Please enter the Arrival Time for Process " + i + ": ");
+	      proc[i][0] = s.nextInt();
+	      System.out.println("Please enter the Burst Time for Process " + i + ": ");
+	      proc[i][1] = s.nextInt();
+	     }
+	       System.out.println();
+	     
+	       //Calculation of Total Time and Initialization of Time Chart array
+	     int total_time = 0;
+	     for(int i = 1; i <= n; i++)
+	     {
+	      total_time += proc[i][1];//it is the summation of all the burst times
+	     }
+	     int time_chart[] = new int[total_time];
+	     
+
+
+
+
+	     for(int i = 0; i < total_time; i++) //***********************************Opening of main for loop******************************************************************(i marks the arrival time)
+ {
+	     
+
+
+
+
+
+
+
+
+	      int sel_proc = 0;
+	      int min = 99999;
+	      for(int j = 1; j <= n; j++)//__________________________this for loop is for Selection of shortest process which has arrived(It will select only one process)_______________
+	      {
+	       if(proc[j][0] <= i)//Condition to check if Process has arrived
+	       {
+	        if(proc[j][1] < min && proc[j][1] != 0)//the second condition is to avoid those processes which have already been executed,because even those processes come under the arrival time.
+	        {
+	         min = proc[j][1];
+	         sel_proc = j;
+	        }
+	       }
+	      }
+	      
+	      //Assign selected process to current time in the Chart
+	      time_chart[i] = sel_proc;
+	      
+	      //Decrement Burst Time of selected process by 1 since it has been assigned the CPU for 1 unit of time
+	      proc[sel_proc][1]--;
+	      
+
+
+
+
+
+
+
+	      //WT and TT Calculation
+	      for(int j = 1; j <= n; j++)
+	      {
+	       if(proc[j][0] <= i)
+	       {
+	        if(proc[j][1] != 0)
+
+	        {
+	         proc[j][3]++;//If process has arrived ,whether it has been assigned to the cpu or not,(eg the processes that have AT as 0)and it has not already completed execution its TT is incremented by 1
+	            if(j != sel_proc)//If the process has not been currently assigned the CPU and has arrived its WT is incremented by 1(eg out of the two processes having AT as 0,only one will be assigned to the cpu i.e the one which has least BT.Therefore for the other process,it is in waiting ,Therefore increase its waiting time.)
+	             proc[j][2]++;
+	        }
+
+
+	        else if(j == sel_proc)//This is a special case in which the process which is  assigned CPU in the current pass and has completed its execution,increase its turnaround time.(BT==0)
+					//It makes sure to neglect the processes that have completed execution in the previous passes
+	         proc[j][3]++;
+
+	       }//closing of if(proc[j][0] <= i)
+
+
+	      }
+	      
+
+
+
+
+
+
+
+	      //Printing the Time Chart
+	      if(i != 0)//if it is not the first process that is scheduled...
+	      {
+	       if(sel_proc != time_chart[i - 1])//if the procedure selected to run is not the previous procedure, 
+	        //If the CPU has been assigned to a different Process we need to print the current value of time and the name of 
+	        //the new Process
+	       {
+	        System.out.print("--" + i + "--P" + sel_proc);//this says that at so and so(i) particylar time,so and so(sel_proc) was scheduled.
+	       }
+		//If the selected procedure for the current pass is same as that of previous one,then you dont need to print anything on the screen.Only print when the procedure to execute is changed.
+	      }
+
+
+
+	      else//If the current time is 0 i.e the printing has just started we need to print the name of the First selected Process(It is the first process that is scheduled)
+	       System.out.print(i + "--P" + sel_proc);
+
+
+	      if(i == total_time - 1)//All the process names have been printed now we have to print the time at which execution ends
+	       System.out.print("--" + (i + 1));
+	      
+ }  //*****************************************************************************************************************************************closing of main for loop*************
+	     System.out.println();
+	     System.out.println();
+	     
+	     //Printing the WT and TT for each Process
+	     System.out.println("P\t WT \t TT ");
+	     for(int i = 1; i <= n; i++)
+	     {
+	      System.out.printf("%d\t%2dms\t%2dms",i,proc[i][2],proc[i][3]);
+	      System.out.println();
+	     }
+	     
+	     System.out.println();
+	     
+	     //Printing the average WT & TT
+	     float WT = 0,TT = 0;
+	     for(int i = 1; i <= n; i++)
+	     {
+	      WT += proc[i][2];
+	      TT += proc[i][3];
+	     }
+	     WT /= n;
+	     TT /= n;
+	     System.out.println("The Average WT is: " + WT + "ms");
+	     System.out.println("The Average TT is: " + TT + "ms");
+	}
+
+}
